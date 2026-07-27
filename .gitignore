@@ -1,0 +1,11 @@
+htmlpdf/benchmark
+pdf/benchmark
+mem_maroto.out
+cpu_maroto.out
+mem_chromedp.out
+cpu_chromedp.out
+pdf.test
+htmlpdf.test
+mem.out
+.DS_Store
+**/.DS_Store
