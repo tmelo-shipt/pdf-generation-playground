@@ -108,6 +108,70 @@ func toHTMLSummaryReport(r pdf.SummaryReport) htmlpdf.SummaryReport {
 	}
 }
 
+func samplePayBreakdownReport() pdf.PayBreakdownReport {
+	return pdf.PayBreakdownReport{
+		ShopperID:   "102727067",
+		PeriodStart: "07/13/26",
+		PeriodEnd:   "07/19/26",
+		PayPeriods:  "1 pay period",
+		Payday:      "07/24/26",
+		Totals: pdf.HeadlineTotals{
+			TotalPay:            "$259.88",
+			TotalPayWithoutTips: "$208.50",
+			TotalTips:           "$51.38",
+		},
+		Summary: []pdf.SummaryRow{
+			{Description: "Order Pay – Bundle & Order Pay", Current: "$102.50", YearToDate: "$102.50"},
+			{Description: "Incentive pay", Current: "$10.00", YearToDate: "$10.00"},
+			{Description: "Referral pay", Current: "$25.00", YearToDate: "$25.00"},
+			{Description: "Shopper Special Pay", Current: "$59.00", YearToDate: "$59.00"},
+			{Description: "Compliance pay", Current: "$12.00", YearToDate: "$12.00"},
+			{Description: "Total Non-tip Pay", Current: "$208.50", YearToDate: "$208.50", Bold: true},
+			{Description: "Tips", Current: "$51.38", YearToDate: "$51.38"},
+			{Description: "Total pay", Current: "$259.88", YearToDate: "$259.88", Bold: true},
+		},
+		DeductionsNote: "Deductions: None – paid as a 1099 independent contractor; no tax withholding applies.",
+		Payouts: []pdf.PayoutRow{
+			{Date: "07/19/26", Method: "standard", Account: "•••• 9400", Amount: "$150.00"},
+			{Date: "07/15/26", Method: "instant", Account: "•••• 9400", Amount: "$80.00", Fee: "-$0.49 fee"},
+			{Date: "07/17/26", Method: "instant", Account: "•••• 1234", Amount: "$49.73", Fee: "-$0.49 fee"},
+			{Date: "07/14/26", Method: "instant", Account: "•••• 5678", Amount: "$8.00", Fee: "-$0.49 fee"},
+		},
+		Bundles: []pdf.BundleRow{
+			{Date: "07/21/26", Reference: "Bundle: e9b5b07a…", BasePay: "$25.00", Tips: "$14.63", Total: "$39.63", Orders: []pdf.BundleOrderLine{
+				{OrderID: "280033103", TipDelta: "+$8.13"},
+				{OrderID: "280033104", TipDelta: "+$6.50"},
+			}},
+			{Date: "07/22/26", Reference: "Order: #280044200", BasePay: "$18.00", Tips: "—", Total: "$18.00"},
+			{Date: "07/21/26", Reference: "Bundle: c1d2e3f4…", BasePay: "$30.00", Tips: "$16.25", Total: "$46.25", Orders: []pdf.BundleOrderLine{
+				{OrderID: "280055301", TipDelta: "+$9.25"},
+				{OrderID: "280055302", TipDelta: "+$4.00"},
+				{OrderID: "280055303", TipDelta: "+$3.00"},
+			}},
+			{Date: "07/23/26", Reference: "Order: #280066400", BasePay: "$12.00", Tips: "—", Total: "$12.00"},
+			{Date: "07/21/26", Reference: "Order: #279443100", Tag: "Returned", BasePay: "$5.50", Tips: "—", Total: "$5.50"},
+			{Date: "07/21/26", Reference: "Order: #279551200", Tag: "Cancelled", BasePay: "$4.00", Tips: "—", Total: "$4.00"},
+			{Date: "07/22/26", Reference: "Order: #279662300", Tag: "Cancelled", BasePay: "$3.00", Tips: "—", Total: "$3.00"},
+			{Date: "07/24/26", Reference: "Order: #279773400", Tag: "Cancelled", BasePay: "$5.00", Tips: "—", Total: "$5.00"},
+			{Date: "07/21/26", Reference: "Order: #279900001", Tag: "Late tip", BasePay: "—", Tips: "$5.00", Total: "$5.00"},
+			{Date: "07/22/26", Reference: "Order: #279900042", Tag: "Late tip", BasePay: "—", Tips: "$12.00", Total: "$12.00"},
+			{Date: "07/21/26", Reference: "Order: #279900087", Tag: "Late tip", BasePay: "—", Tips: "$3.50", Total: "$3.50"},
+			{Reference: "Total", BasePay: "$102.50", Tips: "$51.38", Total: "$153.88", IsTotal: true},
+		},
+		OtherPay: []pdf.OtherPayRow{
+			{Date: "07/23/26", Category: "Incentive Pay", TypeNotes: "—", Amount: "$10.00"},
+			{Date: "07/21/26", Category: "Compliance", TypeNotes: "Guaranteed earnings adjustment", Amount: "$12.00"},
+			{Date: "07/21/26", Category: "Special Pay", TypeNotes: "Shopper bonus", Amount: "$20.00"},
+			{Date: "07/21/26", Category: "Special Pay", TypeNotes: "Metro lead", Amount: "$9.00"},
+			{Date: "07/21/26", Category: "Special Pay", TypeNotes: "Milestones", Amount: "$12.00"},
+			{Date: "07/21/26", Category: "Special Pay", TypeNotes: "Marketing", Amount: "$7.00"},
+			{Date: "07/21/26", Category: "Special Pay", TypeNotes: "Supplemental order pay", Amount: "$11.00"},
+			{Date: "07/23/26", Category: "Referral / Recruitment", TypeNotes: "—", Amount: "$25.00"},
+			{Category: "Total", Amount: "$106.00", IsTotal: true},
+		},
+	}
+}
+
 type PDFSampleCmd struct {
 	OutputDir string `short:"o" long:"outputDir" description:"Path to the output directory" default:"samples/pdf"`
 }
@@ -117,6 +181,9 @@ func (s *PDFSampleCmd) Execute(args []string) error {
 		return err
 	}
 	if err := pdf.NewGenerator(10, 10, 10).GenerateSummary(s.OutputDir, "assets/logo.png", "summary.pdf", sampleSummaryReport()); err != nil {
+		return err
+	}
+	if err := pdf.NewGenerator(10, 10, 10).GeneratePayBreakdown(s.OutputDir, "assets/logo.png", "pay_breakdown.pdf", samplePayBreakdownReport()); err != nil {
 		return err
 	}
 	fmt.Println("Sample PDFs generated successfully at:", s.OutputDir)

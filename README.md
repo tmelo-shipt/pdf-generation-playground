@@ -13,6 +13,7 @@ It serves as a **proof-of-concept / discovery project** for evaluating PDF gener
     - Company logo (PNG, from file or base64)
     - Shopper info, pay-period totals, and piece-rate line items as bordered/shaded key-value tables
     - Multi-period payments statement (`payments.pdf`) and single-page annual summary (`summary.pdf`)
+    - Per-category **pay breakdown** statement (`pay_breakdown.pdf`) — headline totals, a Current/Year-to-date summary table, payouts, per-bundle order detail, and other pay. Reproduces the proposed "Pay Breakdown" design from the pay stub JSON response (a future-direction mock, not the legacy statement).
   - Generates PDFs **fully from Go code**, no browser dependency.
 
 - **option B – HTML → PDF conversion**
